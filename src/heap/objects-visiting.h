@@ -58,6 +58,7 @@ namespace internal {
   V(Symbol)                \
   V(ThinString)            \
   V(TransitionArray)       \
+  V(JSWeakRef)             \
   V(WeakCell)
 
 // For data objects, JS objects and structs along with generic visitor which
@@ -286,6 +287,7 @@ class StaticMarkingVisitor : public StaticVisitorBase {
   INLINE(static void VisitBytecodeArray(Map* map, HeapObject* object));
   INLINE(static void VisitSharedFunctionInfo(Map* map, HeapObject* object));
   INLINE(static void VisitWeakCollection(Map* map, HeapObject* object));
+  INLINE(static void VisitWeakRef(Map* map, HeapObject* object));
   INLINE(static void VisitJSFunction(Map* map, HeapObject* object));
   INLINE(static void VisitNativeContext(Map* map, HeapObject* object));
 

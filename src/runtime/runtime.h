@@ -124,7 +124,11 @@ namespace internal {
   F(IsJSMapIterator, 1, 1)                \
   F(IsJSSetIterator, 1, 1)                \
   F(IsJSWeakMap, 1, 1)                    \
-  F(IsJSWeakSet, 1, 1)
+  F(IsJSWeakSet, 1, 1)                    \
+  F(WeakRefInitialize, 4, 1)              \
+  F(WeakRefValue, 1, 1)                   \
+  F(WeakRefClear, 1, 1)                   \
+  F(IsJSWeakRef, 1, 1)
 
 #define FOR_EACH_INTRINSIC_COMPILER(F)    \
   F(CompileLazy, 1, 1)                    \

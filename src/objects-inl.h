@@ -105,6 +105,7 @@ TYPE_CHECKER(JSTypedArray, JS_TYPED_ARRAY_TYPE)
 TYPE_CHECKER(JSValue, JS_VALUE_TYPE)
 TYPE_CHECKER(JSWeakMap, JS_WEAK_MAP_TYPE)
 TYPE_CHECKER(JSWeakSet, JS_WEAK_SET_TYPE)
+TYPE_CHECKER(JSWeakRef, JS_WEAK_REF_TYPE)
 TYPE_CHECKER(Map, MAP_TYPE)
 TYPE_CHECKER(MutableHeapNumber, MUTABLE_HEAP_NUMBER_TYPE)
 TYPE_CHECKER(Oddball, ODDBALL_TYPE)
@@ -297,7 +298,7 @@ bool HeapObject::IsJSArrayIterator() const {
 }
 
 bool HeapObject::IsJSWeakCollection() const {
-  return IsJSWeakMap() || IsJSWeakSet();
+  return IsJSWeakMap() || IsJSWeakSet() || IsJSWeakRef();
 }
 
 bool HeapObject::IsJSCollection() const { return IsJSMap() || IsJSSet(); }
@@ -594,6 +595,7 @@ CAST_ACCESSOR(JSValue)
 CAST_ACCESSOR(JSWeakCollection)
 CAST_ACCESSOR(JSWeakMap)
 CAST_ACCESSOR(JSWeakSet)
+CAST_ACCESSOR(JSWeakRef)
 CAST_ACCESSOR(LayoutDescriptor)
 CAST_ACCESSOR(Module)
 CAST_ACCESSOR(ModuleInfo)
@@ -1923,6 +1925,8 @@ int JSObject::GetHeaderSize(InstanceType type) {
       return JSWeakMap::kSize;
     case JS_WEAK_SET_TYPE:
       return JSWeakSet::kSize;
+    case JS_WEAK_REF_TYPE:
+      return JSWeakRef::kSize;
     case JS_PROMISE_CAPABILITY_TYPE:
       return JSPromiseCapability::kSize;
     case JS_PROMISE_TYPE:
@@ -5867,6 +5871,12 @@ ORDERED_HASH_TABLE_ITERATOR_ACCESSORS(kind, Object, kKindOffset)
 ACCESSORS(JSWeakCollection, table, Object, kTableOffset)
 ACCESSORS(JSWeakCollection, next, Object, kNextOffset)
 
+ACCESSORS(JSWeakRef, executor, JSFunction, kExecutorOffset)
+ACCESSORS(JSWeakRef, target, WeakCell, kTargetOffset)
+ACCESSORS(JSWeakRef, holdings, Object, kHoldingsOffset)
+SMI_ACCESSORS(JSWeakRef, flags, kFlagsOffset)
+BOOL_ACCESSORS(JSWeakRef, flags, held, kHeldBit)
+BOOL_ACCESSORS(JSWeakRef, flags, queued, kQueuedBit)
 
 Address Foreign::foreign_address() {
   return AddressFrom<Address>(READ_INTPTR_FIELD(this, kForeignAddressOffset));
@@ -6102,7 +6112,6 @@ int Code::CodeSize() { return SizeFor(body_size()); }
 
 
 ACCESSORS(JSArray, length, Object, kLengthOffset)
-
 
 void* JSArrayBuffer::backing_store() const {
   intptr_t ptr = READ_INTPTR_FIELD(this, kBackingStoreOffset);

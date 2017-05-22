@@ -428,6 +428,20 @@ void ObjectStatsCollector::RecordJSWeakCollectionDetails(
   }
 }
 
+void ObjectStatsCollector::RecordJSWeakRefDetails(
+    JSWeakRef* obj) {
+  if (obj->executor() != nullptr) {
+    RecordJSFunctionDetails(obj->executor());
+  }
+  if (obj->holdings() != nullptr && obj->holdings()->IsObject()) {
+    // RecordObjectStats(obj->holdings());
+  }
+  WeakCell* cell = obj->target();
+  if (cell->cleared() != true && cell->value()->IsObject()) {
+    RecordJSObjectDetails(static_cast<JSObject*>(cell->value()));
+  }
+}
+
 void ObjectStatsCollector::RecordJSCollectionDetails(JSObject* obj) {
   // The JS versions use a different HashTable implementation that cannot use
   // the regular helper. Since overall impact is usually small just record

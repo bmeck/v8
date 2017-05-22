@@ -169,6 +169,8 @@ void StaticMarkingVisitor<StaticVisitor>::Initialize() {
 
   table_.Register(kVisitJSWeakCollection, &VisitWeakCollection);
 
+  table_.Register(kVisitJSWeakRef, &VisitWeakRef);
+
   table_.Register(
       kVisitOddball,
       &FixedBodyVisitor<StaticVisitor, Oddball::BodyDescriptor, void>::Visit);
@@ -407,6 +409,35 @@ void StaticMarkingVisitor<StaticVisitor>::VisitWeakCollection(
   HeapObject* obj = HeapObject::cast(*slot);
   heap->mark_compact_collector()->RecordSlot(object, slot, obj);
   StaticVisitor::MarkObjectWithoutPush(heap, obj);
+}
+
+template <typename StaticVisitor>
+void StaticMarkingVisitor<StaticVisitor>::VisitWeakRef(
+    Map* map, HeapObject* object) {
+  Heap* heap = map->GetHeap();
+  JSWeakRef* weak_ref =
+      reinterpret_cast<JSWeakRef*>(object);
+
+  if (weak_ref->executor() != nullptr) {
+    StaticVisitor::MarkObject(heap, weak_ref->executor());
+  }
+  if (weak_ref->holdings() != nullptr && weak_ref->holdings()->IsHeapObject()) {
+    StaticVisitor::MarkObject(heap, reinterpret_cast<HeapObject*>(weak_ref->holdings()));
+  }
+  if (weak_ref->target() != nullptr) {
+    StaticVisitor::MarkObject(heap, weak_ref->target());
+    if (weak_ref->held()) {
+      if (!weak_ref->target()->cleared()) {
+        StaticVisitor::MarkObject(heap, 
+          reinterpret_cast<JSObject*>(weak_ref->target()->value()));
+      }
+    }
+    else if (weak_ref->target()->cleared()) {
+      weak_ref->set_target(nullptr);
+      weak_ref->set_held(false);
+      weak_ref->set_queued(true);
+    }
+  }
 }
 
 

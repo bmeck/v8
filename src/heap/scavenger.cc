@@ -69,6 +69,9 @@ class ScavengingVisitor : public StaticVisitorBase {
     table_.Register(kVisitJSWeakCollection,
                     &ObjectEvacuationStrategy<POINTER_OBJECT>::Visit);
 
+    table_.Register(kVisitJSWeakRef,
+                    &ObjectEvacuationStrategy<POINTER_OBJECT>::Visit);
+
     table_.Register(kVisitJSRegExp,
                     &ObjectEvacuationStrategy<POINTER_OBJECT>::Visit);
 

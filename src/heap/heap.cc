@@ -2793,6 +2793,7 @@ void Heap::CreateInitialObjects() {
   // Microtask queue uses the empty fixed array as a sentinel for "empty".
   // Number of queued microtasks stored in Isolate::pending_microtask_count().
   set_microtask_queue(empty_fixed_array());
+  set_weak_refs(empty_fixed_array());
 
   {
     Handle<FixedArray> empty_sloppy_arguments_elements =
@@ -2934,6 +2935,7 @@ bool Heap::RootCanBeWrittenAfterInitialization(Heap::RootListIndex root_index) {
     case kScriptListRootIndex:
     case kMaterializedObjectsRootIndex:
     case kMicrotaskQueueRootIndex:
+    case kWeakRefsRootIndex:
     case kDetachedContextsRootIndex:
     case kWeakObjectToCodeTableRootIndex:
     case kWeakNewSpaceObjectToCodeListRootIndex:

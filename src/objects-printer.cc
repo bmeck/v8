@@ -208,6 +208,9 @@ void HeapObject::HeapObjectPrint(std::ostream& os) {  // NOLINT
     case JS_WEAK_SET_TYPE:
       JSWeakSet::cast(this)->JSWeakSetPrint(os);
       break;
+    case JS_WEAK_REF_TYPE:
+      JSWeakRef::cast(this)->JSWeakRefPrint(os);
+      break;
     case JS_MODULE_NAMESPACE_TYPE:
       JSModuleNamespace::cast(this)->JSModuleNamespacePrint(os);
       break;
@@ -959,6 +962,13 @@ void JSWeakMap::JSWeakMapPrint(std::ostream& os) {  // NOLINT
 
 void JSWeakSet::JSWeakSetPrint(std::ostream& os) {  // NOLINT
   JSObjectPrintHeader(os, this, "JSWeakSet");
+  os << "\n - table = " << Brief(table());
+  JSObjectPrintBody(os, this);
+}
+
+
+void JSWeakRef::JSWeakRefPrint(std::ostream& os) {  // NOLINT
+  JSObjectPrintHeader(os, this, "JSWeakRef");
   os << "\n - table = " << Brief(table());
   JSObjectPrintBody(os, this);
 }

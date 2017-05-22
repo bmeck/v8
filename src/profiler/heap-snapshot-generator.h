@@ -379,6 +379,8 @@ class V8HeapExplorer : public HeapEntriesAllocator {
   void ExtractJSCollectionReferences(int entry, JSCollection* collection);
   void ExtractJSWeakCollectionReferences(int entry,
                                          JSWeakCollection* collection);
+  void ExtractJSWeakRefReferences(int entry,
+                                         JSWeakRef* ref);
   void ExtractContextReferences(int entry, Context* context);
   void ExtractMapReferences(int entry, Map* map);
   void ExtractSharedFunctionInfoReferences(int entry,

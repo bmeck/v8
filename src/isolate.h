@@ -1157,6 +1157,8 @@ class Isolate {
   void EnqueueMicrotask(Handle<Object> microtask);
   void RunMicrotasks();
   bool IsRunningMicrotasks() const { return is_running_microtasks_; }
+  
+  void AddWeakRefExecution(JSWeakRef* ref);
 
   Handle<Symbol> SymbolFor(Heap::RootListIndex dictionary_index,
                            Handle<String> name, bool private_symbol);

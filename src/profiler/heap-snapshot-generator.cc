@@ -1005,6 +1005,8 @@ bool V8HeapExplorer::ExtractReferencesPass1(int entry, HeapObject* obj) {
       ExtractJSWeakCollectionReferences(entry, JSWeakSet::cast(obj));
     } else if (obj->IsJSWeakMap()) {
       ExtractJSWeakCollectionReferences(entry, JSWeakMap::cast(obj));
+    } else if (obj->IsJSWeakRef()) {
+      ExtractJSWeakRefReferences(entry, JSWeakRef::cast(obj));
     } else if (obj->IsJSSet()) {
       ExtractJSCollectionReferences(entry, JSSet::cast(obj));
     } else if (obj->IsJSMap()) {
@@ -1189,6 +1191,15 @@ void V8HeapExplorer::ExtractJSWeakCollectionReferences(int entry,
   }
   SetInternalReference(obj, entry, "table", obj->table(),
                        JSWeakCollection::kTableOffset);
+}
+void V8HeapExplorer::ExtractJSWeakRefReferences(int entry,
+                                                       JSWeakRef* ref) {
+  SetInternalReference(ref, entry, "executor", ref->executor(),
+                       JSWeakRef::kExecutorOffset);
+  SetInternalReference(ref, entry, "target", ref->target(),
+                       JSWeakRef::kTargetOffset);
+  SetInternalReference(ref, entry, "holdings", ref->holdings(),
+                       JSWeakRef::kHoldingsOffset);
 }
 
 void V8HeapExplorer::ExtractContextReferences(int entry, Context* context) {

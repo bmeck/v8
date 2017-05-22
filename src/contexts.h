@@ -290,6 +290,7 @@ enum ContextLookupFlags {
   V(JS_SET_MAP_INDEX, Map, js_set_map)                                         \
   V(JS_WEAK_MAP_FUN_INDEX, JSFunction, js_weak_map_fun)                        \
   V(JS_WEAK_SET_FUN_INDEX, JSFunction, js_weak_set_fun)                        \
+  V(JS_WEAK_REF_FUN_INDEX, JSFunction, js_weak_ref_fun)                        \
   V(MAP_CACHE_INDEX, Object, map_cache)                                        \
   V(MAP_ITERATOR_MAP_INDEX, Map, map_iterator_map)                             \
   V(MATH_RANDOM_INDEX_INDEX, Smi, math_random_index)                           \

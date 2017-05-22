@@ -666,6 +666,7 @@ ReturnType BodyDescriptorApply(InstanceType type, T1 p1, T2 p2, T3 p3) {
       return Op::template apply<JSObject::BodyDescriptor>(p1, p2, p3);
     case JS_WEAK_MAP_TYPE:
     case JS_WEAK_SET_TYPE:
+    case JS_WEAK_REF_TYPE:
       return Op::template apply<JSWeakCollection::BodyDescriptor>(p1, p2, p3);
     case JS_ARRAY_BUFFER_TYPE:
       return Op::template apply<JSArrayBuffer::BodyDescriptor>(p1, p2, p3);

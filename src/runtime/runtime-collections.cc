@@ -368,5 +368,39 @@ RUNTIME_FUNCTION(Runtime_IsJSWeakSet) {
   return isolate->heap()->ToBoolean(obj->IsJSWeakSet());
 }
 
+RUNTIME_FUNCTION(Runtime_WeakRefInitialize) {
+  HandleScope scope(isolate);
+  DCHECK_EQ(3, args.length());
+  CONVERT_ARG_HANDLE_CHECKED(JSWeakRef, weak_ref, 0);
+  CONVERT_ARG_HANDLE_CHECKED(JSObject, target, 1);
+  CONVERT_ARG_HANDLE_CHECKED(JSFunction, executor, 2);
+  CONVERT_ARG_HANDLE_CHECKED(Object, holdings, 3);
+  JSWeakRef::Initialize(weak_ref, isolate, target, executor, holdings);
+  return *weak_ref;
+}
+
+RUNTIME_FUNCTION(Runtime_WeakRefValue) {
+  HandleScope scope(isolate);
+  DCHECK_EQ(1, args.length());
+  CONVERT_ARG_HANDLE_CHECKED(JSWeakRef, weak_ref, 0);
+  Handle<Object> value = JSWeakRef::Value(weak_ref, isolate);
+  weak_ref->set_held(true);
+  return *value;
+}
+
+RUNTIME_FUNCTION(Runtime_WeakRefClear) {
+  HandleScope scope(isolate);
+  DCHECK_EQ(1, args.length());
+  CONVERT_ARG_HANDLE_CHECKED(JSWeakRef, weak_ref, 0);
+  JSWeakRef::Clear(weak_ref, isolate);
+  return isolate->heap()->undefined_value();
+}
+
+RUNTIME_FUNCTION(Runtime_IsJSWeakRef) {
+  SealHandleScope shs(isolate);
+  DCHECK_EQ(1, args.length());
+  CONVERT_ARG_CHECKED(Object, obj, 0);
+  return isolate->heap()->ToBoolean(obj->IsJSWeakRef());
+}
 }  // namespace internal
 }  // namespace v8

@@ -188,6 +188,7 @@
   V(value_string, "value")                                         \
   V(WeakMap_string, "WeakMap")                                     \
   V(WeakSet_string, "WeakSet")                                     \
+  V(WeakRef_string, "WeakRef")                                     \
   V(weekday_string, "weekday")                                     \
   V(will_handle_string, "willHandle")                              \
   V(writable_string, "writable")                                   \

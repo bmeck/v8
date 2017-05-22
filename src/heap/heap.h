@@ -201,6 +201,7 @@ using v8::MemoryPressureLevel;
   V(UnseededNumberDictionary, code_stubs, CodeStubs)                           \
   V(FixedArray, materialized_objects, MaterializedObjects)                     \
   V(FixedArray, microtask_queue, MicrotaskQueue)                               \
+  V(FixedArray, weak_refs, WeakRefs)                                           \
   V(FixedArray, detached_contexts, DetachedContexts)                           \
   V(ArrayList, retained_maps, RetainedMaps)                                    \
   V(WeakHashTable, weak_object_to_code_table, WeakObjectToCodeTable)           \
@@ -2282,7 +2283,7 @@ class Heap {
   Object* native_contexts_list_;
   Object* allocation_sites_list_;
 
-  // List of encountered weak collections (JSWeakMap and JSWeakSet) during
+  // List of encountered weak collections (JSWeakMap JSWeakSet and JSWeakRef) during
   // marking. It is initialized during marking, destroyed after marking and
   // contains Smi(0) while marking is not active.
   Object* encountered_weak_collections_;

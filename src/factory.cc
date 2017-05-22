@@ -945,6 +945,32 @@ Handle<JSPromise> Factory::NewJSPromise() {
   return promise;
 }
 
+void Factory::InitJSWeakRef(
+  Handle<JSWeakRef> weak_ref,
+  Handle<JSObject> target,
+  Handle<JSFunction> executor,
+  Handle<Object> holdings
+) {
+  Handle<JSFunction> constructor(
+      isolate()->native_context()->js_weak_ref_fun(), isolate());
+  DCHECK(constructor->has_initial_map());
+  Handle<Map> map(constructor->initial_map(), isolate());
+
+  DCHECK(!map->is_prototype_map());
+  
+  weak_ref->set_target(*NewWeakCell(target));
+  weak_ref->set_executor(*executor);
+  weak_ref->set_holdings(*holdings);
+  weak_ref->set_held(false);
+  weak_ref->set_queued(false);
+
+  Handle<FixedArray> refs(isolate()->heap()->weak_refs(), isolate());
+  int num_refs = refs->length();
+  refs = isolate()->factory()->CopyFixedArrayAndGrow(refs, 1);
+  isolate()->heap()->set_weak_refs(*refs);
+  refs->set(num_refs, *weak_ref);
+}
+
 Handle<Context> Factory::NewNativeContext() {
   Handle<FixedArray> array =
       NewFixedArray(Context::NATIVE_CONTEXT_SLOTS, TENURED);

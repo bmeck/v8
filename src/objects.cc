@@ -2724,6 +2724,10 @@ void JSObject::JSObjectShortPrint(StringStream* accumulator) {
       accumulator->Add("<JSWeakSet>");
       break;
     }
+    case JS_WEAK_REF_TYPE: {
+      accumulator->Add("<JSWeakRef>");
+      break;
+    }
     case JS_REGEXP_TYPE: {
       accumulator->Add("<JSRegExp");
       JSRegExp* regexp = JSRegExp::cast(this);
@@ -12673,6 +12677,7 @@ bool CanSubclassHaveInobjectProperties(InstanceType instance_type) {
     case JS_VALUE_TYPE:
     case JS_WEAK_MAP_TYPE:
     case JS_WEAK_SET_TYPE:
+    case JS_WEAK_REF_TYPE:
       return true;
 
     case BYTECODE_ARRAY_TYPE:
@@ -19290,6 +19295,31 @@ Handle<JSArray> JSWeakCollection::GetEntries(Handle<JSWeakCollection> holder,
     DCHECK_EQ(max_entries * values_per_entry, count);
   }
   return isolate->factory()->NewJSArrayWithElements(entries);
+}
+
+void JSWeakRef::Initialize(Handle<JSWeakRef> weak_ref,
+                                  Isolate* isolate,
+                                  Handle<JSObject> target,
+                                  Handle<JSFunction> executor,
+                                  Handle<Object> holdings) {
+  isolate->factory()->InitJSWeakRef(weak_ref, target, executor, holdings);
+}
+
+Handle<HeapObject> JSWeakRef::Value(Handle<JSWeakRef> weak_ref,
+                                  Isolate* isolate) {
+  if (weak_ref->target() == nullptr || weak_ref->target()->cleared()) {
+    return isolate->factory()->null_value();
+  }
+  weak_ref->set_held(true);
+  return Handle<HeapObject>(
+    reinterpret_cast<HeapObject*>(weak_ref->target()->value()));
+}
+
+void JSWeakRef::Clear(Handle<JSWeakRef> weak_ref,
+                                  Isolate* isolate) {
+  weak_ref->set_executor(nullptr);
+  weak_ref->set_holdings(nullptr);
+  weak_ref->set_target(nullptr);
 }
 
 // static

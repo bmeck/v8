@@ -16,6 +16,7 @@ var GetHash;
 var GlobalObject = global.Object;
 var GlobalWeakMap = global.WeakMap;
 var GlobalWeakSet = global.WeakSet;
+var GlobalWeakRef = global.WeakRef;
 var toStringTagSymbol = utils.ImportNow("to_string_tag_symbol");
 
 utils.Import(function(from) {
@@ -183,6 +184,49 @@ utils.InstallFunctions(GlobalWeakSet.prototype, DONT_ENUM, [
   "add", WeakSetAdd,
   "has", WeakSetHas,
   "delete", WeakSetDelete
+]);
+
+function WeakRefConstructor(target, finalizer, holdings) {
+  if (IS_UNDEFINED(new.target)) {
+    throw %make_type_error(kConstructorNotFunction, "WeakRef");
+  }
+
+  if (typeof target !== 'object') {
+    throw %make_type_error(kInvalidArgument);
+  }
+  if (typeof finalizer !== 'function') {
+    throw %make_type_error(kInvalidArgument);
+  }
+
+  %WeakRefInitialize(this, target, finalizer, holdings);
+}
+
+function WeakRefValue() {
+  if (!IS_WEAKREF(this)) {
+    throw %make_type_error(kIncompatibleMethodReceiver,
+                        'WeakRef.prototype.value', this);
+  }
+  return %WeakRefValue(this);
+}
+function WeakRefClear() {
+  if (!IS_WEAKREF(this)) {
+    throw %make_type_error(kIncompatibleMethodReceiver,
+                        'WeakRef.prototype.clear', this);
+  }
+  return %WeakRefClear(this);
+}
+%SetCode(GlobalWeakRef, WeakRefConstructor);
+%FunctionSetLength(GlobalWeakRef, 0);
+%FunctionSetPrototype(GlobalWeakRef, new GlobalObject());
+%AddNamedProperty(GlobalWeakRef.prototype, "constructor", GlobalWeakRef,
+                 DONT_ENUM);
+%AddNamedProperty(GlobalWeakRef.prototype, toStringTagSymbol, "WeakRef",
+                  DONT_ENUM | READ_ONLY);
+
+// Set up the non-enumerable functions on the WeakSet prototype object.
+utils.InstallFunctions(GlobalWeakRef.prototype, DONT_ENUM, [
+  "get", WeakRefValue,
+  "clear", WeakRefClear
 ]);
 
 })

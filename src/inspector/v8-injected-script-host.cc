@@ -199,6 +199,10 @@ void V8InjectedScriptHost::subtypeCallback(
     info.GetReturnValue().Set(toV8StringInternalized(isolate, "weakset"));
     return;
   }
+  if (value->IsWeakRef()) {
+    info.GetReturnValue().Set(toV8StringInternalized(isolate, "weakref"));
+    return;
+  }
   if (value->IsMapIterator() || value->IsSetIterator()) {
     info.GetReturnValue().Set(toV8StringInternalized(isolate, "iterator"));
     return;

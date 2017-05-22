@@ -3034,6 +3034,13 @@ void Genesis::InitializeGlobal(Handle<JSGlobalObject> global_object,
     InstallWithIntrinsicDefaultProto(isolate, js_weak_set_fun,
                                      Context::JS_WEAK_SET_FUN_INDEX);
   }
+  {  // -- W e a k R e f
+    Handle<JSFunction> js_weak_ref_fun = InstallFunction(
+        global, "WeakRef", JS_WEAK_REF_TYPE, JSWeakRef::kSize,
+        isolate->initial_object_prototype(), Builtins::kIllegal);
+    InstallWithIntrinsicDefaultProto(isolate, js_weak_ref_fun,
+                                     Context::JS_WEAK_REF_FUN_INDEX);
+  }
 
   {  // -- P r o x y
     CreateJSProxyMaps();

@@ -3343,7 +3343,8 @@ void Isolate::FireCallCompletedCallback() {
   if (!handle_scope_implementer()->CallDepthIsZero()) return;
 
   bool run_microtasks =
-      pending_microtask_count() &&
+      (heap()->weak_refs()->length() ||
+      pending_microtask_count()) &&
       !handle_scope_implementer()->HasMicrotasksSuppressions() &&
       handle_scope_implementer()->microtasks_policy() ==
           v8::MicrotasksPolicy::kAuto;
@@ -3510,6 +3511,33 @@ void Isolate::RunMicrotasks() {
   RunMicrotasksInternal();
   is_running_microtasks_ = false;
   FireMicrotasksCompletedCallback();
+  int left = 0;
+  for (int i = 0; i < heap()->weak_refs()->length(); i++) {
+    JSWeakRef* weak_ref = reinterpret_cast<JSWeakRef*>(heap()->weak_refs()->get(i));
+    if (weak_ref->queued()) {
+      JSFunction* executor = weak_ref->executor();
+      if (executor == nullptr) continue;
+      MaybeHandle<Object> maybe_exception;
+      Handle<Object> argv[] = {
+        Handle<Object>(weak_ref->holdings(), this),
+        Handle<Object>(weak_ref, this)
+      };
+      int argc = 2;
+      Execution::TryCall(this,
+                        Handle<Object>(executor, this), factory()->undefined_value(),
+                        argc, argv,
+                        Execution::MessageHandling::kReport, &maybe_exception);
+      weak_ref->set_executor(nullptr);
+      weak_ref->set_holdings(nullptr);
+      weak_ref->set_held(false);
+      heap()->weak_refs()->set(left, weak_ref);
+    }
+    else {
+      left++;
+    }
+    weak_ref->set_held(false);
+  }
+  heap()->weak_refs()->Shrink(left);
 }
 
 
@@ -3610,7 +3638,6 @@ void Isolate::FireMicrotasksCompletedCallback() {
     microtasks_completed_callbacks_.at(i)(reinterpret_cast<v8::Isolate*>(this));
   }
 }
-
 
 void Isolate::SetUseCounterCallback(v8::Isolate::UseCounterCallback callback) {
   DCHECK(!use_counter_callback_);

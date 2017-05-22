@@ -148,6 +148,7 @@ class ObjectStatsCollector {
   void RecordJSFunctionDetails(JSFunction* function);
   void RecordJSObjectDetails(JSObject* object);
   void RecordJSWeakCollectionDetails(JSWeakCollection* obj);
+  void RecordJSWeakRefDetails(JSWeakRef* obj);
   void RecordMapDetails(Map* map);
   void RecordScriptDetails(Script* obj);
   void RecordTemplateInfoDetails(TemplateInfo* obj);

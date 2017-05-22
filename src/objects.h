@@ -65,6 +65,7 @@
 //         - JSWeakCollection
 //           - JSWeakMap
 //           - JSWeakSet
+//           - JSWeakRef
 //         - JSRegExp
 //         - JSFunction
 //         - JSGeneratorObject
@@ -402,7 +403,8 @@ const int kStubMinorKeyBits = kSmiValueSize - kStubMajorKeyBits - 1;
   V(JS_SET_ITERATOR_TYPE)                                                      \
   V(JS_MAP_ITERATOR_TYPE)                                                      \
   V(JS_WEAK_MAP_TYPE)                                                          \
-  V(JS_WEAK_SET_TYPE)                                                          \
+  V(JS_WEAK_SET_TYPE)                                                         \
+  V(JS_WEAK_REF_TYPE)                                                          \
   V(JS_PROMISE_CAPABILITY_TYPE)                                                \
   V(JS_PROMISE_TYPE)                                                           \
   V(JS_REGEXP_TYPE)                                                            \
@@ -754,6 +756,7 @@ enum InstanceType {
   JS_MAP_ITERATOR_TYPE,
   JS_WEAK_MAP_TYPE,
   JS_WEAK_SET_TYPE,
+  JS_WEAK_REF_TYPE,
   JS_PROMISE_CAPABILITY_TYPE,
   JS_PROMISE_TYPE,
   JS_REGEXP_TYPE,
@@ -882,6 +885,7 @@ V8_EXPORT_PRIVATE std::ostream& operator<<(std::ostream& os,
   V(HANDLER_TABLE_SUB_TYPE)                      \
   V(JS_COLLECTION_SUB_TYPE)                      \
   V(JS_WEAK_COLLECTION_SUB_TYPE)                 \
+  V(JS_WEAK_REF_SUB_TYPE)                 \
   V(MAP_CODE_CACHE_SUB_TYPE)                     \
   V(NOSCRIPT_SHARED_FUNCTION_INFOS_SUB_TYPE)     \
   V(NUMBER_STRING_CACHE_SUB_TYPE)                \
@@ -1071,6 +1075,7 @@ template <class C> inline bool Is(Object* obj);
   V(JSWeakCollection)                  \
   V(JSWeakMap)                         \
   V(JSWeakSet)                         \
+  V(JSWeakRef)                         \
   V(Map)                               \
   V(MapCache)                          \
   V(ModuleInfo)                        \
@@ -7585,6 +7590,49 @@ class JSWeakSet: public JSWeakCollection {
 
  private:
   DISALLOW_IMPLICIT_CONSTRUCTORS(JSWeakSet);
+};
+
+// The JSWeakRef describes EcmaScript Harmony weak refs
+class JSWeakRef: public JSObject {
+ public:
+
+  DECL_ACCESSORS(target, WeakCell)
+  DECL_ACCESSORS(executor, JSFunction)
+  DECL_ACCESSORS(holdings, Object)
+
+  DECL_INT_ACCESSORS(flags)
+  // marker to keep target alive until tick is over
+  DECL_BOOLEAN_ACCESSORS(held)
+  // declares that it needs to be executor'd
+  DECL_BOOLEAN_ACCESSORS(queued)
+
+  DECLARE_CAST(JSWeakRef)
+
+  // Dispatched behavior.
+  DECLARE_PRINTER(JSWeakRef)
+  DECLARE_VERIFIER(JSWeakRef)
+
+  static const int kTargetOffset = JSWeakCollection::kSize;
+  static const int kExecutorOffset = kTargetOffset + kPointerSize;
+  static const int kHoldingsOffset = kExecutorOffset + kPointerSize;
+  static const int kFlagsOffset = kHoldingsOffset + kPointerSize;
+  static const int kSize = kFlagsOffset + kPointerSize;
+
+  static const int kHeldBit = 0;
+  static const int kQueuedBit =1;
+  
+  static void Initialize(Handle<JSWeakRef> weak_ref,
+                             Isolate* isolate,
+                             Handle<JSObject> target,
+                             Handle<JSFunction> executor,
+                             Handle<Object> holdings);
+  static void Clear(Handle<JSWeakRef> weak_ref,
+                             Isolate* isolate);
+  static Handle<HeapObject> Value(Handle<JSWeakRef> weak_ref,
+                             Isolate* isolate);
+
+ private:
+  DISALLOW_IMPLICIT_CONSTRUCTORS(JSWeakRef);
 };
 
 

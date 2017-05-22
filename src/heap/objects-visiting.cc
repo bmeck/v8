@@ -87,6 +87,9 @@ VisitorId StaticVisitorBase::GetVisitorId(int instance_type, int instance_size,
     case JS_WEAK_SET_TYPE:
       return kVisitJSWeakCollection;
 
+    case JS_WEAK_REF_TYPE:
+      return kVisitJSWeakRef;
+
     case JS_REGEXP_TYPE:
       return kVisitJSRegExp;
 
