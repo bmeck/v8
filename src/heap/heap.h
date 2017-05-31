@@ -2283,7 +2283,7 @@ class Heap {
   Object* native_contexts_list_;
   Object* allocation_sites_list_;
 
-  // List of encountered weak collections (JSWeakMap JSWeakSet and JSWeakRef) during
+  // List of encountered weak collections (JSWeakMap and JSWeakSet) during
   // marking. It is initialized during marking, destroyed after marking and
   // contains Smi(0) while marking is not active.
   Object* encountered_weak_collections_;

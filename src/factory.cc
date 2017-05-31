@@ -957,7 +957,7 @@ void Factory::InitJSWeakRef(
   Handle<Map> map(constructor->initial_map(), isolate());
 
   DCHECK(!map->is_prototype_map());
-  
+
   weak_ref->set_target(*NewWeakCell(target));
   weak_ref->set_executor(*executor);
   weak_ref->set_holdings(*holdings);

@@ -422,17 +422,17 @@ void StaticMarkingVisitor<StaticVisitor>::VisitWeakRef(
     StaticVisitor::MarkObject(heap, weak_ref->executor());
   }
   if (weak_ref->holdings() != nullptr && weak_ref->holdings()->IsHeapObject()) {
-    StaticVisitor::MarkObject(heap, reinterpret_cast<HeapObject*>(weak_ref->holdings()));
+    StaticVisitor::MarkObject(heap,
+        reinterpret_cast<HeapObject*>(weak_ref->holdings()));
   }
   if (weak_ref->target() != nullptr) {
     StaticVisitor::MarkObject(heap, weak_ref->target());
     if (weak_ref->held()) {
       if (!weak_ref->target()->cleared()) {
-        StaticVisitor::MarkObject(heap, 
+        StaticVisitor::MarkObject(heap,
           reinterpret_cast<JSObject*>(weak_ref->target()->value()));
       }
-    }
-    else if (weak_ref->target()->cleared()) {
+    } else if (weak_ref->target()->cleared()) {
       weak_ref->set_target(nullptr);
       weak_ref->set_held(false);
       weak_ref->set_queued(true);

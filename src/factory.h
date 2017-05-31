@@ -281,8 +281,7 @@ class V8_EXPORT_PRIVATE Factory final {
     Handle<JSWeakRef> weak_ref,
     Handle<JSObject> target,
     Handle<JSFunction> executor,
-    Handle<Object> holdings
-  );
+    Handle<Object> holdings);
 
   // Create a global (but otherwise uninitialized) context.
   Handle<Context> NewNativeContext();

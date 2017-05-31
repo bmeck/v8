@@ -7595,7 +7595,6 @@ class JSWeakSet: public JSWeakCollection {
 // The JSWeakRef describes EcmaScript Harmony weak refs
 class JSWeakRef: public JSObject {
  public:
-
   DECL_ACCESSORS(target, WeakCell)
   DECL_ACCESSORS(executor, JSFunction)
   DECL_ACCESSORS(holdings, Object)
@@ -7619,8 +7618,8 @@ class JSWeakRef: public JSObject {
   static const int kSize = kFlagsOffset + kPointerSize;
 
   static const int kHeldBit = 0;
-  static const int kQueuedBit =1;
-  
+  static const int kQueuedBit = 1;
+
   static void Initialize(Handle<JSWeakRef> weak_ref,
                              Isolate* isolate,
                              Handle<JSObject> target,

@@ -3513,7 +3513,8 @@ void Isolate::RunMicrotasks() {
   FireMicrotasksCompletedCallback();
   int left = 0;
   for (int i = 0; i < heap()->weak_refs()->length(); i++) {
-    JSWeakRef* weak_ref = reinterpret_cast<JSWeakRef*>(heap()->weak_refs()->get(i));
+    JSWeakRef* weak_ref = reinterpret_cast<JSWeakRef*>(
+        heap()->weak_refs()->get(i));
     if (weak_ref->queued()) {
       JSFunction* executor = weak_ref->executor();
       if (executor == nullptr) continue;
@@ -3524,15 +3525,15 @@ void Isolate::RunMicrotasks() {
       };
       int argc = 2;
       Execution::TryCall(this,
-                        Handle<Object>(executor, this), factory()->undefined_value(),
+                        Handle<Object>(executor, this),
+                        factory()->undefined_value(),
                         argc, argv,
                         Execution::MessageHandling::kReport, &maybe_exception);
       weak_ref->set_executor(nullptr);
       weak_ref->set_holdings(nullptr);
       weak_ref->set_held(false);
       heap()->weak_refs()->set(left, weak_ref);
-    }
-    else {
+    } else {
       left++;
     }
     weak_ref->set_held(false);
