@@ -217,7 +217,8 @@ DEFINE_IMPLICATION(es_staging, harmony)
     "harmony invalid escapes in tagged template literals")              \
   V(harmony_restrict_constructor_return,                                \
     "harmony disallow non undefined primitive return value from class " \
-    "constructor")
+    "constructor")                                                      \
+  V(harmony_weakref, "harmony WeakRef")
 
 // Features that are shipping (turned on by default, but internal flag remains).
 #define HARMONY_SHIPPING_BASE(V)                           \

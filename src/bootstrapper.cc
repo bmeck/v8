@@ -3034,13 +3034,6 @@ void Genesis::InitializeGlobal(Handle<JSGlobalObject> global_object,
     InstallWithIntrinsicDefaultProto(isolate, js_weak_set_fun,
                                      Context::JS_WEAK_SET_FUN_INDEX);
   }
-  {  // -- W e a k R e f
-    Handle<JSFunction> js_weak_ref_fun = InstallFunction(
-        global, "WeakRef", JS_WEAK_REF_TYPE, JSWeakRef::kSize,
-        isolate->initial_object_prototype(), Builtins::kIllegal);
-    InstallWithIntrinsicDefaultProto(isolate, js_weak_ref_fun,
-                                     Context::JS_WEAK_REF_FUN_INDEX);
-  }
 
   {  // -- P r o x y
     CreateJSProxyMaps();
@@ -4090,6 +4083,16 @@ void Genesis::InitializeGlobal_harmony_promise_finally() {
     info->set_length(0);
     native_context()->set_promise_thrower_finally_shared_fun(*info);
   }
+}
+
+void Genesis::InitializeGlobal_harmony_weakref() {
+  if (!FLAG_harmony_weakref) return;
+
+  Handle<JSFunction> js_weak_ref_fun = InstallFunction(
+      global, "WeakRef", JS_WEAK_REF_TYPE, JSWeakRef::kSize,
+      isolate->initial_object_prototype(), Builtins::kIllegal);
+  InstallWithIntrinsicDefaultProto(isolate, js_weak_ref_fun,
+                                   Context::JS_WEAK_REF_FUN_INDEX);
 }
 
 void Genesis::InitializeGlobal_harmony_regexp_dotall() {
