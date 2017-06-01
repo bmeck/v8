@@ -4088,10 +4088,12 @@ void Genesis::InitializeGlobal_harmony_promise_finally() {
 void Genesis::InitializeGlobal_harmony_weakref() {
   if (!FLAG_harmony_weakref) return;
 
+  Handle<JSObject> global = Handle<JSObject>(native_context()->global_object());
+
   Handle<JSFunction> js_weak_ref_fun = InstallFunction(
       global, "WeakRef", JS_WEAK_REF_TYPE, JSWeakRef::kSize,
-      isolate->initial_object_prototype(), Builtins::kIllegal);
-  InstallWithIntrinsicDefaultProto(isolate, js_weak_ref_fun,
+      isolate()->initial_object_prototype(), Builtins::kIllegal);
+  InstallWithIntrinsicDefaultProto(isolate(), js_weak_ref_fun,
                                    Context::JS_WEAK_REF_FUN_INDEX);
 }
 
